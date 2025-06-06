@@ -52,9 +52,11 @@ export default function BackupGroups() {
           </div>
 
           {openGroups[dbName] && (
-            <div className="mt-4 border-l-4 border-red-500 pl-4 space-y-4">
+            <div class="relative pl-6">
+              <div class="absolute left-2 top-0 bottom-0 w-0.5 bg-red-500"></div>
               {backups.map((backup, index) => (
-                <div key={index}>
+                <div className="mb-8 relative" key={index}>
+                  <div class="absolute -left-3.5 top-0 transform -translate-x-1/2 w-3 h-3 bg-red-500 rounded-full"></div>
                   <div className="text-gray-600 text-sm mb-1">
                     created on {backup.created}
                   </div>
