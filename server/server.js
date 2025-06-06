@@ -97,13 +97,10 @@ const httpServer = http.createServer((req, res) => {
   res.end();
 });
 
-httpServer.listen(HTTP_PORT, () => {
-  console.log(`HTTP Server running on port ${HTTP_PORT} (redirecting to HTTPS)`);
+
+
+app.listen(port, () => {
+  console.log(`Server listening at http://localhost:${port}`);
+  console.log(`Ensure your backup folder exists at: ${path.resolve(backupsFolder)}`);
+  console.log('To run: node server.js');
 });
-
-
-// app.listen(port, () => {
-//   console.log(`Server listening at http://localhost:${port}`);
-//   console.log(`Ensure your backup folder exists at: ${path.resolve(backupsFolder)}`);
-//   console.log('To run: node server.js');
-// });

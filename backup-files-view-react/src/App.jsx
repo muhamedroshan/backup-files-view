@@ -27,7 +27,7 @@ function App() {
 
     const fetchBackups = async () => {
         try {
-            const response = await fetch('http://173.212.240.152:3001/api/backups');
+            const response = await fetch('https://173.212.240.152:3001/api/backups');
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
