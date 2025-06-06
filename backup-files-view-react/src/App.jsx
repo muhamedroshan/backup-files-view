@@ -3,6 +3,8 @@ import PasswordPrompt from './PasswordPrompt/PasswordPromptDailog'
 import BackupGroups from './backup-files-view/BackupFilesView'
 import ScreenState from "./screen-state/ScreenState";
 
+const serverURL = "http://173.212.240.152:3001/api/backups"
+
 function App() {
     const [showPrompt, setShowPrompt] = useState(false);
     const [loading, setLoading] = useState(true);
@@ -23,12 +25,24 @@ function App() {
         setShowPrompt(true);
     };
 
+    const fetchBackups = async () => {
+        try {
+            const response = await fetch('http://173.212.240.152:3001/api/backups');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            console.log(data)
+        }catch(e){
+            console.error("Failed to fetch backups:", e);
+            setError(e.message);
+        }finally{
+           setLoading(false) 
+        }   
+    }
+
     useEffect(() => {
-    // Simulate an API call
-        setTimeout(() => {
-            setLoading(false);
-            setError("Failed to fetch data. Please try again.");
-        }, 2000);
+        fetchBackups()
     }, []);
 
 

@@ -2,9 +2,13 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const cors = require('cors');
+const https = require('https');
+const http = require('http');
 
 const app = express();
 const port = 3001;
+const HTTP_PORT = 3001;
+const HTTPS_PORT = 3001;
 
 
 app.use(cors());
@@ -13,6 +17,13 @@ app.use(cors());
 
 // const backupsFolder = path.join(__dirname, 'backups');
 const backupsFolder = "/opt/odoo_backups";
+
+const privateKey = fs.readFileSync('/root/key.pem', 'utf8');
+const certificate = fs.readFileSync('/root/cert.pem', 'utf8')
+
+const credentials = { key: privateKey, cert: certificate };
+
+const httpsServer = https.createServer(credentials, app);
 
 // Create the backups folder if it doesn't exist (optional, for testing)
 if (!fs.existsSync(backupsFolder)) {
@@ -77,9 +88,22 @@ app.get('/download/:filename', (req, res) => {
   }
 });
 
-
-app.listen(port, () => {
-  console.log(`Server listening at http://localhost:${port}`);
-  console.log(`Ensure your backup folder exists at: ${path.resolve(backupsFolder)}`);
-  console.log('To run: node server.js');
+httpsServer.listen(HTTPS_PORT, () => {
+  console.log(`HTTPS Server running on port ${HTTPS_PORT}`);
 });
+
+const httpServer = http.createServer((req, res) => {
+  res.writeHead(301, { "Location": "https://" + req.headers['host'] + req.url });
+  res.end();
+});
+
+httpServer.listen(HTTP_PORT, () => {
+  console.log(`HTTP Server running on port ${HTTP_PORT} (redirecting to HTTPS)`);
+});
+
+
+// app.listen(port, () => {
+//   console.log(`Server listening at http://localhost:${port}`);
+//   console.log(`Ensure your backup folder exists at: ${path.resolve(backupsFolder)}`);
+//   console.log('To run: node server.js');
+// });
