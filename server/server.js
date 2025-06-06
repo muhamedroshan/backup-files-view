@@ -6,8 +6,7 @@ const https = require('https');
 const http = require('http');
 
 const app = express();
-const port = 3001;
-const HTTP_PORT = 3001;
+const HTTP_PORT = 3002;
 const HTTPS_PORT = 3001;
 
 
@@ -99,8 +98,8 @@ const httpServer = http.createServer((req, res) => {
 
 
 
-app.listen(port, () => {
-  console.log(`Server listening at http://localhost:${port}`);
+app.listen(HTTP_PORT, () => {
+  console.log(`Server listening at http://localhost:${HTTP_PORT}`);
   console.log(`Ensure your backup folder exists at: ${path.resolve(backupsFolder)}`);
   console.log('To run: node server.js');
 });
