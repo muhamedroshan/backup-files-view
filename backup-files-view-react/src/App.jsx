@@ -1,35 +1,54 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState, useEffect } from "react";
+import PasswordPrompt from './PasswordPrompt/PasswordPromptDailog'
+import BackupGroups from './backup-files-view/BackupFilesView'
+import ScreenState from "./screen-state/ScreenState";
 
 function App() {
-  const [count, setCount] = useState(0)
+    const [showPrompt, setShowPrompt] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1 className='text-red-500'>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    const handleConfirm = (password) => {
+    console.log("Confirmed password:", password);
+    setShowPrompt(false);
+    };
+
+    const handleCancel = () => {
+    console.log("Prompt canceled");
+    setShowPrompt(false);
+    };
+
+    const handleDownloadClick=(fileName) => {
+        console.log(fileName)
+        setShowPrompt(true);
+    };
+
+    useEffect(() => {
+    // Simulate an API call
+        setTimeout(() => {
+            setLoading(false);
+            setError("Failed to fetch data. Please try again.");
+        }, 2000);
+    }, []);
+
+
+    return (
+        <div>
+            <div className={!loading ? "block" : "hidden"} >
+                <BackupGroups
+                handleDownload={handleDownloadClick} />
+                <PasswordPrompt
+                visible={showPrompt}
+                onConfirm={handleConfirm}
+                onCancel={handleCancel} />
+                </div>
+            <div className={ loading ? "block" : "hidden"} >
+                <ScreenState 
+                loading={loading} 
+                error={error} />
+            </div> 
+        </div>
+    )
 }
 
 export default App

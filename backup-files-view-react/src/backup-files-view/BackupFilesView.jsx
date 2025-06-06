@@ -22,9 +22,10 @@ const groupByDatabase = (list) => {
   return groups;
 };
 
-export default function BackupGroups() {
+const BackupGroups = ({handleDownload,}) => {
   const groupedBackups = groupByDatabase(backups);
   const [openGroups, setOpenGroups] = useState({});
+
 
   const toggleGroup = (dbName) => {
     setOpenGroups((prev) => ({
@@ -56,15 +57,17 @@ export default function BackupGroups() {
               <div class="absolute left-2 top-0 bottom-0 w-0.5 bg-red-500"></div>
               {backups.map((backup, index) => (
                 <div className="mb-8 relative" key={index}>
-                  <div class="absolute -left-3.5 top-0 transform -translate-x-1/2 w-3 h-3 bg-red-500 rounded-full"></div>
+                  <div className="absolute -left-3.5 top-0 transform -translate-x-1/2 w-3 h-3 bg-red-500 rounded-full"></div>
                   <div className="text-gray-600 text-sm mb-1">
                     created on {backup.created}
                   </div>
                   <div className="flex items-center justify-between bg-red-300 text-red-900 px-4 py-2 rounded-full border border-red-500">
                     <span>{backup.filename}</span>
-                    <a href={`/${backup.filename}`} download>
+                    <button onClick={()=>{
+                        handleDownload(backup.filename)
+                      }} download>
                       <FaDownload className="text-blue-600 hover:text-blue-800" />
-                    </a>
+                    </button>
                   </div>
                 </div>
               ))}
@@ -75,3 +78,5 @@ export default function BackupGroups() {
     </div>
   );
 }
+
+export default BackupGroups
