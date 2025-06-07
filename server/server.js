@@ -12,9 +12,12 @@ const HTTPS_PORT = int(process.env.HTTP_PORT);
 const privateKeyPath = process.env.PRIVATE_KEY
 const certificatePath = process.env.CERTIFICATE
 
+const isFileExist = (fs.existsSync(privateKeyPath) && fs.existsSync(certificatePath))
+
 let privateKey;
 let certificate;
 let credentials;
+let httpsServer;
 
 
 app.use(cors());
@@ -22,7 +25,12 @@ app.use(cors());
 
 const backupsFolder = process.env.BACKUP_FOLDER;
 
-
+if(isFileExist){
+  privateKey = fs.readFileSync(`${privateKeyPath}`, 'utf8');
+  certificate = fs.readFileSync(`${certificatePath}`, 'utf8')
+  credentials = { key: privateKey, cert: certificate };
+  httpsServer = https.createServer(credentials, app);
+}
 
 // Create the backups folder if it doesn't exist (optional, for testing)
 if (!fs.existsSync(backupsFolder)) {
@@ -88,12 +96,6 @@ app.get('/download/:filename', (req, res) => {
 });
 
 try{
-  privateKey = fs.readFileSync(`${privateKeyPath}`, 'utf8');
-  certificate = fs.readFileSync(`${certificatePath}`, 'utf8')
-  credentials = { key: privateKey, cert: certificate };
-
-  const httpsServer = https.createServer(credentials, app);
-
   httpsServer.listen(HTTPS_PORT, () => {
     console.log(`HTTPS Server running on port ${HTTPS_PORT}`);
   });
