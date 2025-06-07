@@ -12,18 +12,17 @@ const HTTPS_PORT = int(process.env.HTTP_PORT);
 const privateKeyPath = process.env.PRIVATE_KEY
 const certificatePath = process.env.CERTIFICATE
 
+let privateKey;
+let certificate;
+let credentials;
+
 
 app.use(cors());
 
 
 const backupsFolder = process.env.BACKUP_FOLDER;
 
-const privateKey = fs.readFileSync(`${privateKeyPath}`, 'utf8');
-const certificate = fs.readFileSync(`${certificatePath}`, 'utf8')
 
-const credentials = { key: privateKey, cert: certificate };
-
-const httpsServer = https.createServer(credentials, app);
 
 // Create the backups folder if it doesn't exist (optional, for testing)
 if (!fs.existsSync(backupsFolder)) {
@@ -88,15 +87,20 @@ app.get('/download/:filename', (req, res) => {
   }
 });
 
-httpsServer.listen(HTTPS_PORT, () => {
-  console.log(`HTTPS Server running on port ${HTTPS_PORT}`);
-});
+try{
+  privateKey = fs.readFileSync(`${privateKeyPath}`, 'utf8');
+  certificate = fs.readFileSync(`${certificatePath}`, 'utf8')
+  credentials = { key: privateKey, cert: certificate };
 
-const httpServer = http.createServer((req, res) => {
-  res.writeHead(301, { "Location": "https://" + req.headers['host'] + req.url });
-  res.end();
-});
+  const httpsServer = https.createServer(credentials, app);
 
+  httpsServer.listen(HTTPS_PORT, () => {
+    console.log(`HTTPS Server running on port ${HTTPS_PORT}`);
+  });
+}catch(e){
+  console.warn(`HTTPS not enabled: Missing private key or certificate files. Error: ${error.message}`);
+  console.log('Falling back to HTTP only...');
+}
 
 
 app.listen(HTTP_PORT, () => {
