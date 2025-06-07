@@ -4,21 +4,22 @@ const path = require('path');
 const cors = require('cors');
 const https = require('https');
 const http = require('http');
+require('dotenv').config();
 
 const app = express();
-const HTTP_PORT = 3002;
-const HTTPS_PORT = 3001;
+const HTTP_PORT = int(process.env.HTTP_PORT);
+const HTTPS_PORT = int(process.env.HTTP_PORT);
+const privateKeyPath = process.env.PRIVATE_KEY
+const certificatePath = process.env.CERTIFICATE
 
 
 app.use(cors());
 
-// Define the path to your backups folder
 
-// const backupsFolder = path.join(__dirname, 'backups');
-const backupsFolder = "/opt/odoo_backups";
+const backupsFolder = process.env.BACKUP_FOLDER;
 
-const privateKey = fs.readFileSync('/root/key.pem', 'utf8');
-const certificate = fs.readFileSync('/root/cert.pem', 'utf8')
+const privateKey = fs.readFileSync(`${privateKeyPath}`, 'utf8');
+const certificate = fs.readFileSync(`${certificatePath}`, 'utf8')
 
 const credentials = { key: privateKey, cert: certificate };
 

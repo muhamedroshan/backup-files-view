@@ -3,8 +3,11 @@ import PasswordPrompt from './PasswordPrompt/PasswordPromptDailog'
 import BackupGroups from './backup-files-view/BackupFilesView'
 import ScreenState from "./screen-state/ScreenState";
 
-const serverURL = 'https://173.212.240.152:3001/api/backups'
-const downloadURL = 'https://173.212.240.152:3001/download/'
+const serverListApiURL = import.meta.env.SERVER_URL_API_LIST_BACK_UP
+const downloadApiURL = import.meta.env.SERVER_URL_API_DOWNLOAD
+const textWrongPassword = "Wrong Password"
+const passwordDefaultTitle = "Enter Password"
+const adminPassword = import.meta.env.ADMIN_PASSWORD
 
 function App() {
     const [showPrompt, setShowPrompt] = useState(false);
@@ -13,17 +16,22 @@ function App() {
     const [downloading, setDownloading] = useState(false);
     const [fileName, setFileName] = useState("")
     const [backups, setBackups] = useState([])
+    const [passwordPromtTitle, setPasswordPromptTitle] = useState("Enter Password")
   
 
     const handleConfirm = (password) => {
-    console.log("Confirmed password:", password);
-    setShowPrompt(false);
-    handleDownload(fileName);
+        if(password===adminPassword){
+            handleDownload(fileName);
+            setShowPrompt(false)
+        }else{
+            setPasswordPromptTitle(textWrongPassword)
+        }
     };
 
     const handleCancel = () => {
     console.log("Prompt canceled");
     setShowPrompt(false);
+    setPasswordPromptTitle(passwordDefaultTitle)
     };
 
     const handleDownloadClick=(fileName) => {
@@ -37,7 +45,7 @@ function App() {
         setError(null);
         try {
             if (!downloading) {
-                const response = await fetch(`${downloadURL}${filename}`);
+                const response = await fetch(`${downloadApiURL}${filename}`);
                 if (!response.ok) {
                     const errorText = await response.text();
                     throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
@@ -73,7 +81,7 @@ function App() {
 
     const fetchBackups = async () => {
         try {
-            const response = await fetch(serverURL);
+            const response = await fetch(serverListApiURL);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -102,7 +110,8 @@ function App() {
                 <PasswordPrompt
                 visible={showPrompt}
                 onConfirm={handleConfirm}
-                onCancel={handleCancel} />
+                onCancel={handleCancel}
+                title={passwordPromtTitle} />
                 </div>
             <div className={ loading ? "block" : "hidden"} >
                 <ScreenState 

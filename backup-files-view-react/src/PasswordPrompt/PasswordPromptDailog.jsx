@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const PasswordPrompt = ({ visible, onConfirm, onCancel }) => {
+const PasswordPrompt = ({ visible, onConfirm, onCancel, title }) => {
   const [password, setPassword] = useState("");
 
   if (!visible) return null;
@@ -18,7 +18,7 @@ const PasswordPrompt = ({ visible, onConfirm, onCancel }) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-sm">
-        <h2 className="text-xl font-semibold mb-4 text-center">Enter Password</h2>
+        <h2 className="text-xl font-semibold mb-4 text-center">{title}</h2>
         <input
           type="password"
           className="w-full border border-gray-300 rounded-lg px-4 py-2 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
