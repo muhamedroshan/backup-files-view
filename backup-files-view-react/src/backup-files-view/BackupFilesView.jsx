@@ -1,19 +1,13 @@
 import React, { useState } from "react";
 import { FaDownload } from "react-icons/fa";
 
-// Sample backup list
-const backups = [
-  { filename: "db_alakeel_2025-06-05_15-18-56.zip", created: "2025-06-05 15:18:57" },
-  { filename: "db_alakeel_2024-06-05_15-18-56.zip", created: "2024-06-05 15:18:57" },
-  { filename: "db_wedo_2025-06-01_11-05-00.zip", created: "2025-06-01 11:05:01" },
-  { filename: "db_wedo_2024-06-01_11-05-00.zip", created: "2024-06-01 11:05:00" },
-];
+
 
 // Group by database name
 const groupByDatabase = (list) => {
   const groups = {};
   list.forEach((backup) => {
-    const dbName = backup.filename.split("_").slice(0, 2).join("_");
+    const dbName = backup.databaseName
     if (!groups[dbName]) {
       groups[dbName] = [];
     }
@@ -22,7 +16,7 @@ const groupByDatabase = (list) => {
   return groups;
 };
 
-const BackupGroups = ({handleDownload,}) => {
+const BackupGroups = ({handleDownload,backups}) => {
   const groupedBackups = groupByDatabase(backups);
   const [openGroups, setOpenGroups] = useState({});
 

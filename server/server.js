@@ -45,7 +45,7 @@ app.get('/api/backups', async (req, res) => {
 
         // Extract database name from filename
         const dbNameMatch = file.name.match(/^db_([^_]+)/);
-        const databaseName = dbNameMatch ? dbNameMatch[1] : 'unknown';
+        const databaseName = dbNameMatch ? "db_"+dbNameMatch[1] : 'unknown';
 
         backupData.push({
           filename: file.name,
