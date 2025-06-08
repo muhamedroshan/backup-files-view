@@ -3,11 +3,11 @@ import PasswordPrompt from './PasswordPrompt/PasswordPromptDailog'
 import BackupGroups from './backup-files-view/BackupFilesView'
 import ScreenState from "./screen-state/ScreenState";
 
-const serverListApiURL = import.meta.env.SERVER_URL_API_LIST_BACK_UP
-const downloadApiURL = import.meta.env.SERVER_URL_API_DOWNLOAD
+const serverListApiURL = import.meta.env.VITE_SERVER_URL_API_LIST_BACK_UP
+const downloadApiURL = import.meta.env.VITE_SERVER_URL_API_DOWNLOAD
 const textWrongPassword = "Wrong Password"
-const passwordDefaultTitle = "Enter Password"
-const adminPassword = import.meta.env.ADMIN_PASSWORD
+const passwordDefaultTitle = "Enter Password" 
+const adminPassword = import.meta.env.VITE_ADMIN_PASSWORD
 
 function App() {
     const [showPrompt, setShowPrompt] = useState(false);

@@ -12,6 +12,7 @@ const HTTP_PORT = process.env.HTTP_PORT || 3000
 const HTTPS_PORT = process.env.HTTPS_PORT
 const path_private_key = process.env.PRIVATE_KEY
 const path_certificate = process.env.CERTIFICATE
+const file_pattern = process.env.DB_FILE_PATTERN
 
 const is_cert_file_exist = (fs.existsSync(path_private_key) && fs.existsSync(path_certificate))
 
@@ -54,7 +55,7 @@ app.get('/api/backups', async (req, res) => {
         const stats = await fs.promises.stat(filePath); // Get file stats (like creation time)
 
         // Extract database name from filename
-        const dbNameMatch = file.name.match(/^db_([^_]+)/);
+        const dbNameMatch = file.name.match(file_pattern);
         const databaseName = dbNameMatch ? "db_"+dbNameMatch[1] : 'unknown';
 
         backupData.push({
