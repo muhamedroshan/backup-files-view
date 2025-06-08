@@ -20,6 +20,7 @@ let privateKey
 let certificate
 let credentials
 let httpsServer
+let regexPattern
 
 app.use(cors());
 
@@ -27,6 +28,16 @@ app.use(cors());
 
 // const backupsFolder = path.join(__dirname, 'backups');
 const backupsFolder = process.env.BACKUP_FOLDER;
+
+if (file_pattern) {
+    // Remove leading/trailing quotes and slashes if they exist
+    const cleanedPattern = file_pattern.replace(/^\/|"|\/$/g, '');
+    regexPattern = new RegExp(cleanedPattern);
+} else {
+    console.warn("DB_FILE_PATTERN not found in .env file.");
+    // Handle this case, perhaps by setting a default pattern or throwing an error
+    regexPattern = /^db_([^_]+)/; // Default or fallback
+}
 
 if(is_cert_file_exist){
   privateKey = fs.readFileSync(`${path_private_key}`, 'utf8');
@@ -55,7 +66,7 @@ app.get('/api/backups', async (req, res) => {
         const stats = await fs.promises.stat(filePath); // Get file stats (like creation time)
 
         // Extract database name from filename
-        const dbNameMatch = file.name.match(file_pattern);
+        const dbNameMatch = file.name.match(regexPattern);
         const databaseName = dbNameMatch ? "db_"+dbNameMatch[1] : 'unknown';
 
         backupData.push({
