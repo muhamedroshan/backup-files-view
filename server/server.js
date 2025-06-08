@@ -4,33 +4,25 @@ const path = require('path');
 const cors = require('cors');
 const https = require('https');
 const http = require('http');
-require('dotenv').config();
 
 const app = express();
-const HTTP_PORT = int(process.env.HTTP_PORT);
-const HTTPS_PORT = int(process.env.HTTP_PORT);
-const privateKeyPath = process.env.PRIVATE_KEY
-const certificatePath = process.env.CERTIFICATE
-
-const isFileExist = (fs.existsSync(privateKeyPath) && fs.existsSync(certificatePath))
-
-let privateKey;
-let certificate;
-let credentials;
-let httpsServer;
+const HTTP_PORT = 3002;
+const HTTPS_PORT = 3001;
 
 
 app.use(cors());
 
+// Define the path to your backups folder
 
-const backupsFolder = process.env.BACKUP_FOLDER;
+// const backupsFolder = path.join(__dirname, 'backups');
+const backupsFolder = "/opt/odoo_backups";
 
-if(isFileExist){
-  privateKey = fs.readFileSync(`${privateKeyPath}`, 'utf8');
-  certificate = fs.readFileSync(`${certificatePath}`, 'utf8')
-  credentials = { key: privateKey, cert: certificate };
-  httpsServer = https.createServer(credentials, app);
-}
+const privateKey = fs.readFileSync('/root/key.pem', 'utf8');
+const certificate = fs.readFileSync('/root/cert.pem', 'utf8')
+
+const credentials = { key: privateKey, cert: certificate };
+
+const httpsServer = https.createServer(credentials, app);
 
 // Create the backups folder if it doesn't exist (optional, for testing)
 if (!fs.existsSync(backupsFolder)) {
@@ -95,14 +87,15 @@ app.get('/download/:filename', (req, res) => {
   }
 });
 
-try{
-  httpsServer.listen(HTTPS_PORT, () => {
-    console.log(`HTTPS Server running on port ${HTTPS_PORT}`);
-  });
-}catch(e){
-  console.warn(`HTTPS not enabled: Missing private key or certificate files. Error: ${error.message}`);
-  console.log('Falling back to HTTP only...');
-}
+httpsServer.listen(HTTPS_PORT, () => {
+  console.log(`HTTPS Server running on port ${HTTPS_PORT}`);
+});
+
+const httpServer = http.createServer((req, res) => {
+  res.writeHead(301, { "Location": "https://" + req.headers['host'] + req.url });
+  res.end();
+});
+
 
 
 app.listen(HTTP_PORT, () => {
