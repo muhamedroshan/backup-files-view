@@ -25,11 +25,11 @@ app.use(cors());
 // Define the path to your backups folder
 
 // const backupsFolder = path.join(__dirname, 'backups');
-//const backupsFolder = process.BACKUP_FOLDER;
+const backupsFolder = process.env.BACKUP_FOLDER;
 
 if(is_cert_file_exist){
-  privateKey = fs.readFileSync('/root/key.pem', 'utf8');
-  certificate = fs.readFileSync('/root/cert.pem', 'utf8')
+  privateKey = fs.readFileSync(`${path_private_key}`, 'utf8');
+  certificate = fs.readFileSync(`${path_certificate}`, 'utf8')
   credentials = { key: privateKey, cert: certificate };
   httpsServer = https.createServer(credentials, app);
 }
