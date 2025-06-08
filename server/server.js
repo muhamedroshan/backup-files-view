@@ -1,14 +1,15 @@
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '.env') });
 const express = require('express');
 const fs = require('fs');
-const path = require('path');
 const cors = require('cors');
 const https = require('https');
 const http = require('http');
-require('dotenv').config();
+
 
 const app = express();
-const HTTP_PORT = int(process.env.HTTP_PORT);;
-const HTTPS_PORT = int(process.env.HTTPS_PORT);;
+const HTTP_PORT = process.env.HTTP_PORT || 3000
+const HTTPS_PORT = process.env.HTTPS_PORT
 
 
 app.use(cors());
@@ -17,6 +18,7 @@ app.use(cors());
 
 // const backupsFolder = path.join(__dirname, 'backups');
 const backupsFolder = "/opt/odoo_backups";
+console.log("value of HTTP_PORT: "+process.env.HTTP_PORT)
 
 const privateKey = fs.readFileSync('/root/key.pem', 'utf8');
 const certificate = fs.readFileSync('/root/cert.pem', 'utf8')
