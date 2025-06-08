@@ -10,22 +10,29 @@ const http = require('http');
 const app = express();
 const HTTP_PORT = process.env.HTTP_PORT || 3000
 const HTTPS_PORT = process.env.HTTPS_PORT
+const path_private_key = process.env.PRIVATE_KEY
+const path_certificate = process.env.CERTIFICATE
 
+const is_cert_file_exist = (fs.existsSync(path_private_key) && fs.existsSync(path_certificate))
+
+let privateKey
+let certificate
+let credentials
+let httpsServer
 
 app.use(cors());
 
 // Define the path to your backups folder
 
 // const backupsFolder = path.join(__dirname, 'backups');
-const backupsFolder = "/opt/odoo_backups";
-console.log("value of HTTP_PORT: "+process.env.HTTP_PORT)
+const backupsFolder = process.BACKUP_FOLDER;
 
-const privateKey = fs.readFileSync('/root/key.pem', 'utf8');
-const certificate = fs.readFileSync('/root/cert.pem', 'utf8')
-
-const credentials = { key: privateKey, cert: certificate };
-
-const httpsServer = https.createServer(credentials, app);
+if(is_cert_file_exist){
+  privateKey = fs.readFileSync('/root/key.pem', 'utf8');
+  certificate = fs.readFileSync('/root/cert.pem', 'utf8')
+  credentials = { key: privateKey, cert: certificate };
+  httpsServer = https.createServer(credentials, app);
+}
 
 // Create the backups folder if it doesn't exist (optional, for testing)
 if (!fs.existsSync(backupsFolder)) {
@@ -72,7 +79,7 @@ app.get('/api/backups', async (req, res) => {
   }
 });
 
-// Optional: API endpoint to download a specific file (for the download buttons)
+// API endpoint to download a specific file (for the download buttons)
 app.get('/download/:filename', (req, res) => {
   const filename = req.params.filename;
   const filePath = path.join(backupsFolder, filename);
@@ -90,14 +97,16 @@ app.get('/download/:filename', (req, res) => {
   }
 });
 
-httpsServer.listen(HTTPS_PORT, () => {
-  console.log(`HTTPS Server running on port ${HTTPS_PORT}`);
-});
+if(is_cert_file_exist){
+  try{
+    httpsServer.listen(HTTPS_PORT, () => {
+      console.log(`HTTPS Server running on port ${HTTPS_PORT}`);
+    });
+  }catch(e){
+    console.log(e)
+  }
+}
 
-const httpServer = http.createServer((req, res) => {
-  res.writeHead(301, { "Location": "https://" + req.headers['host'] + req.url });
-  res.end();
-});
 
 
 
