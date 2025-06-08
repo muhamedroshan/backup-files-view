@@ -25,7 +25,7 @@ app.use(cors());
 // Define the path to your backups folder
 
 // const backupsFolder = path.join(__dirname, 'backups');
-const backupsFolder = process.BACKUP_FOLDER;
+//const backupsFolder = process.BACKUP_FOLDER;
 
 if(is_cert_file_exist){
   privateKey = fs.readFileSync('/root/key.pem', 'utf8');
