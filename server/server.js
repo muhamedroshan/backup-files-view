@@ -4,10 +4,11 @@ const path = require('path');
 const cors = require('cors');
 const https = require('https');
 const http = require('http');
+require('dotenv').config();
 
 const app = express();
-const HTTP_PORT = 3002;
-const HTTPS_PORT = 3001;
+const HTTP_PORT = int(process.env.HTTP_PORT);;
+const HTTPS_PORT = int(process.env.HTTPS_PORT);;
 
 
 app.use(cors());
